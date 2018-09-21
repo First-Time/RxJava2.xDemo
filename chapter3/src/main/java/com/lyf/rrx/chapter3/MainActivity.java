@@ -29,68 +29,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //==========================P65=================================
-        /*Observable.create(new ObservableOnSubscribe<Integer>() {
-
-            @Override
-            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
-                if (!emitter.isDisposed()) {
-                    for (int i = 0; i < 10; i++) {
-                        emitter.onNext(i);
-                    }
+        /*Observable.create((ObservableOnSubscribe<Integer>) emitter -> {
+            if (!emitter.isDisposed()) {
+                for (int i = 0; i < 10; i++) {
+                    emitter.onNext(i);
                 }
             }
-        }).subscribe(new Consumer<Integer>() {
-            @Override
-            public void accept(Integer integer) throws Exception {
-                System.out.println(integer);
-            }
-        }, new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
-                System.out.println("Error: " + throwable.getMessage());
-            }
-        }, new Action() {
-            @Override
-            public void run() throws Exception {
-                System.out.println("Sequence complete.");
-            }
-        });*/
+        }).subscribe(integer -> System.out.println(integer),
+                throwable -> System.out.println("Error: " + throwable.getMessage()),
+                () -> System.out.println("Sequence complete."));*/
 
         //==========================P67=================================
-        /*Observable.just("hello just")
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String s) throws Exception {
-                        System.out.println(s);
-                    }
-                });
+//        Observable.just("hello just").subscribe(s -> System.out.println(s));
 
-        Observable.just(1,2,3,4,5,6,7,8,9,10)
-                .subscribe(new Consumer<Integer>() {
-                    @Override
-                    public void accept(Integer integer) throws Exception {
-                        System.out.println("Next: " + integer);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        System.out.println("Error: " + throwable.getMessage());
-                    }
-                }, new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        System.out.println("Sequence complete.");
-                    }
-                });*/
+        /*Observable.just(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+                .subscribe(integer -> System.out.println("Next: " + integer),
+                        throwable -> System.out.println("Error: " + throwable.getMessage()),
+                        () -> System.out.println("Sequence complete."));*/
 
         //==========================P69=================================
-        /*Observable.fromArray("hello", "from")
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String s) throws Exception {
-                        System.out.println(s);
-                    }
-                });*/
+//        Observable.fromArray("hello", "from").subscribe(s -> System.out.println(s));
 
         //==========================P69=================================
         /*List<Integer> items = new ArrayList<>();
@@ -99,141 +57,46 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Observable.fromIterable(items)
-                .subscribe(new Consumer<Integer>() {
-                    @Override
-                    public void accept(Integer integer) throws Exception {
-                        System.out.println("Next: " + integer);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        System.out.println("Error: " + throwable.getMessage());
-                    }
-                }, new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        System.out.println("Sequence complete.");
-                    }
-                });*/
+                .subscribe(integer -> System.out.println("Next: " + integer),
+                        throwable -> System.out.println("Error: " + throwable.getMessage()),
+                        () -> System.out.println("Sequence complete."));*/
 
         //==========================P70=================================
         /*ExecutorService executorService = Executors.newCachedThreadPool();
         Future<String> future = executorService.submit(new MyCallable());
 
-        Observable.fromFuture(future)
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String s) throws Exception {
-                        System.out.println(s);
-                    }
-                });*/
+        Observable.fromFuture(future).subscribe(s -> System.out.println(s));*/
 
         //==========================P71=================================
         /*ExecutorService executorService = Executors.newCachedThreadPool();
         Future<String> future = executorService.submit(new MyCallable());
 
-        Observable.fromFuture(future, 4, TimeUnit.SECONDS)
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String s) throws Exception {
-                        System.out.println(s);
-                    }
-                });*/
+        Observable.fromFuture(future, 4, TimeUnit.SECONDS).subscribe(s -> System.out.println(s));*/
 
         //==========================P72=================================
         /*Observable.just("hello repeat")
                 .repeat(3)
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String s) throws Exception {
-                        System.out.println("s=" + s);
-                    }
-                });*/
+                .subscribe(s -> System.out.println("s=" + s));*/
 
         //==========================P73=================================
-        /*Observable.range(0,9).repeatWhen(new Function<Observable<Object>, ObservableSource<?>>() {
-            @Override
-            public ObservableSource<?> apply(Observable<Object> objectObservable) throws Exception {
-                return Observable.timer(10, TimeUnit.SECONDS);
-            }
-        }).subscribe(new Consumer<Integer>() {
-            @Override
-            public void accept(Integer integer) throws Exception {
-                System.out.println(integer);
-            }
-        });
-
-        try {
-            Thread.sleep(12000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
+        /*Observable.range(0,9).repeatWhen(objectObservable -> Observable.timer(10, TimeUnit.SECONDS))
+                .subscribe(integer -> System.out.println(integer));*/
 
         //==========================P74=================================
         /*final long startTimeMillis = System.currentTimeMillis();
         Observable.interval(500, TimeUnit.MILLISECONDS)
                 .take(5)
-                .repeatUntil(new BooleanSupplier() {
-                    @Override
-                    public boolean getAsBoolean() throws Exception {
-                        return System.currentTimeMillis() - startTimeMillis > 5000;
-                    }
-                }).subscribe(new Consumer<Long>() {
-            @Override
-            public void accept(Long aLong) throws Exception {
-                System.out.println(aLong);
-            }
-        });
-
-        try {
-            Thread.sleep(6000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
+                .repeatUntil(() -> System.currentTimeMillis() - startTimeMillis > 5000)
+                .subscribe(aLong -> System.out.println(aLong));*/
 
         //==========================P76=================================
-        /*Observable observable = Observable.defer(new Callable<ObservableSource<? extends String>>() {
-            @Override
-            public ObservableSource call() throws Exception {
-                return Observable.just("hello defer");
-            }
-        });
-
-        observable.subscribe(new Consumer<String>() {
-            @Override
-            public void accept(String s) throws Exception {
-                System.out.println(s);
-            }
-        });*/
+        /*Observable observable = Observable.defer(() -> Observable.just("hello defer"));
+        observable.subscribe(s -> System.out.println(s));*/
 
         //==========================P78=================================
-        /*Observable.interval(1, TimeUnit.SECONDS)
-                .subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(Long aLong) throws Exception {
-                        System.out.println(aLong);
-                    }
-                });
-
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
+//        Observable.interval(1, TimeUnit.SECONDS).take(10).subscribe(aLong -> System.out.println(aLong));
 
         //==========================P79=================================
-        Observable.timer(5, TimeUnit.SECONDS)
-                .subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(Long aLong) throws Exception {
-                        System.out.println("hello timer");
-                    }
-                });
-
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Observable.timer(5, TimeUnit.SECONDS).subscribe(aLong -> System.out.println("hello timer"));
     }
 }

@@ -5,6 +5,13 @@ import android.support.v7.app.AppCompatActivity;
 
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.schedulers.TestScheduler;
 
 public class MainActivity extends AppCompatActivity {
@@ -12,46 +19,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         //==========================P82=================================
-        /*Observable.create(new ObservableOnSubscribe<String>() {
-
-
-            *//** Called for each Observer that subscribes.
-             *
-             * @param emitter the safe emitter instance, never null
-             * @throws Exception on error*//*
-
-            @Override
-            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
-                emitter.onNext("hello");
-                emitter.onNext("world");
-            }
+        /*Observable.create((ObservableOnSubscribe<String>) emitter -> {
+            emitter.onNext("hello");
+            emitter.onNext("world");
         }).observeOn(Schedulers.newThread())
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String s) throws Exception {
-                        System.out.println(s);
-                    }
-                });*/
+                .subscribe(s -> System.out.println(s));*/
 
         //==========================P83=================================
-        /*Observable.just("aaa", "bbb")
+        Observable.just("aaa", "bbb")
                 .observeOn(Schedulers.newThread())
-                .map(new Function<String, String>() {
-                    @Override
-                    public String apply(@NonNull String s) throws Exception {
-                        return s.toUpperCase();
-                    }
-                })
+                .map(s -> s.toUpperCase())
                 .subscribeOn(Schedulers.single())
                 .observeOn(Schedulers.io())
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String s) throws Exception {
-                        System.out.println(s);
-                    }
-                });*/
+                .subscribe(s -> System.out.println(s));
 
         //==========================P97=================================
         /*Observable.create(new ObservableOnSubscribe<String>() {
@@ -188,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("atomicLong's value=" + atomicLong.get() + ", virtual time:" + scheduler.now(TimeUnit.SECONDS));*/
 
         //==========================P103=================================
-        TestScheduler scheduler = new TestScheduler();
+        /*TestScheduler scheduler = new TestScheduler();
         scheduler.createWorker().schedule(new Runnable() {
             @Override
             public void run() {
@@ -208,6 +191,6 @@ public class MainActivity extends AppCompatActivity {
 
         scheduler.advanceTimeBy(20, TimeUnit.SECONDS);
 
-        scheduler.triggerActions();
+        scheduler.triggerActions();*/
     }
 }
