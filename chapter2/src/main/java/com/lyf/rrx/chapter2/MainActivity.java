@@ -311,14 +311,14 @@ public class MainActivity extends AppCompatActivity {
         observable.subscribe(subscriber1);
         observable.subscribe(subscriber2);*/
 
-        //==========================P36=================================
+        //==========================P36(Single之后onSuccess和onError事件。)=================================
         /*Single.create((SingleOnSubscribe<String>) emitter -> emitter.onSuccess("test"))
                 .subscribe(s -> System.out.println(s), throwable -> throwable.printStackTrace());
 
         Single.create((SingleOnSubscribe<String>) emitter -> emitter.onSuccess("test"))
                 .subscribe((s, throwable) -> System.out.println(s));*/
 
-        //==========================P39=================================
+        //==========================P39(Completable在创建后，不会发射任何数据，从CompletableEmitter的源码中可以看到。Completable之后onComplete和onError事件，同事Completable并没有map、flatMap等操作符。)=================================
         /*Completable.fromAction(() -> System.out.println("Hello World")).subscribe();
 
         Completable.create(emitter -> {
@@ -331,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
         }).andThen(Observable.range(1, 10))
         .subscribe(integer -> System.out.println(integer));*/
 
-        //==========================P43=================================
+        //==========================P43(Maybe是RxJava2.x之后才有的新类型，可以看成是Single和Completable的结合。)=================================
         /*Maybe.create((MaybeOnSubscribe<String>) emitter -> {
             emitter.onSuccess("testA");
             emitter.onSuccess("testB");
