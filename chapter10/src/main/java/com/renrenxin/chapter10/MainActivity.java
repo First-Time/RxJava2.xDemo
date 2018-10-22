@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(s -> System.out.println("executor: " + s));*/
 
         //==========================P222(ParalleFlowable：RxJava2.0.5版本新增了ParallelFlowable API，它允许并行地执行一些操作符，例如map、filter、concatMap、flatMap、collect、reduce等。)=================================
-        /*ParallelFlowable parallelFlowable = Flowable.range(1, 100).parallel();
+        ParallelFlowable parallelFlowable = Flowable.range(1, 100).parallel();
 
         parallelFlowable.runOn(Schedulers.io())
                 .map(new Function<Integer, Object>() {
@@ -111,6 +111,6 @@ public class MainActivity extends AppCompatActivity {
                     public void accept(String s) throws Exception {
                         System.out.println(s);
                     }
-                });*/
+                });
     }
 }
