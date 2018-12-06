@@ -51,30 +51,29 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         textView = findViewById(R.id.text_view);
 
-        //==========================P11=================================
-        /*Observable.create(new ObservableOnSubscribe<String>() {
-            @Override
-            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
-                emitter.onNext("Hello World!");
-            }
-        });
-
-        Observable.create(new ObservableOnSubscribe<String>() {
-            @Override
-            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
-                emitter.onNext("Hello World!");
-            }
-        }).subscribe(new Consumer<String>() {
+        //==========================P13=================================
+        /*Observable.just("Hello World!").subscribe(new Consumer<String>() {
             @Override
             public void accept(String s) throws Exception {
                 System.out.println(s);
             }
-        });
+        });*/
 
-        Observable.just("Hello World!").subscribe(new Consumer<String>() {
+        //==========================P14=================================
+        /*Observable.just("Hello World!").subscribe(new Consumer<String>() {
             @Override
             public void accept(String s) throws Exception {
                 System.out.println(s);
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                System.out.println(throwable.getMessage());
+            }
+        }, new Action() {
+            @Override
+            public void run() throws Exception {
+                System.out.println("onCompleted");
             }
         });*/
 
@@ -84,6 +83,32 @@ public class MainActivity extends AppCompatActivity {
                         throwable -> System.out.println(throwable.getMessage()),
                         () -> System.out.println("onComplete"),
                         disposable -> System.out.println("subscribe"));*/
+
+        /*Observable.just("Hello World!")
+                .subscribe(new Consumer<String>() {
+                               @Override
+                               public void accept(String s) throws Exception {
+                                   System.out.println(s);
+                               }
+                           },
+                        new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
+                                System.out.println(throwable.getMessage());
+                            }
+                        },
+                        new Action() {
+                            @Override
+                            public void run() throws Exception {
+                                System.out.println("onComplete");
+                            }
+                        },
+                        new Consumer<Disposable>() {
+                            @Override
+                            public void accept(Disposable disposable) throws Exception {
+                                System.out.println("subscribe");
+                            }
+                        });*/
 
         //==========================P16=================================
         /*Observable.just("Hello World").subscribe(new Observer<String>() {
@@ -167,7 +192,6 @@ public class MainActivity extends AppCompatActivity {
                         System.out.println("doOnLifecycle run:");
                     }
                 })
-
                 .doOnTerminate(new Action() {
                     @Override
                     public void run() throws Exception {
@@ -191,11 +215,11 @@ public class MainActivity extends AppCompatActivity {
                 .observeOn(Schedulers.newThread());
 
         observable.subscribe(subscriber1);
-        try {
+        *//*try {
             Thread.sleep(1000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*//*
         observable.subscribe(subscriber2);*/
 
         //==========================P22(Cold Observable 如何转换成Hot Observable)=================================
@@ -249,8 +273,8 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        subject.subscribe(subscriber3);
-*/
+        subject.subscribe(subscriber3);*/
+
         //==========================P29(Hot Observable 如何转换成 Cold Observable)=================================
         /*Consumer<Long> subscriber1 = aLong -> System.out.println("subscriber1:" + aLong);
         Consumer<Long> subscriber2 = aLong -> System.out.println("subscriber2:" + aLong);
@@ -259,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
                 .take(Integer.MAX_VALUE)
                 .subscribe(emitter::onNext))
                 .observeOn(Schedulers.newThread()).publish();
-//        connectableObservable.connect();
+        connectableObservable.connect();
 
         Observable<Long> observable = connectableObservable.refCount();
 
@@ -280,18 +304,18 @@ public class MainActivity extends AppCompatActivity {
         observable.subscribe(subscriber1);
         observable.subscribe(subscriber2);*/
 
-        //==========================P30=================================
+        //==========================P30（如果不是所有的订阅者/观察者都取消了订阅，而只是部分取消，则部分的订阅者/观察者重新开始订阅时，不会从头开始数据流。）=================================
         /*Consumer<Long> subscriber1 = aLong -> System.out.println("subscriber1:" + aLong);
         Consumer<Long> subscriber2 = aLong -> System.out.println("subscriber2:" + aLong);
         Consumer<Long> subscriber3 = aLong -> System.out.println("subscriber3:" + aLong);
 
-        Observable<Long> observable = Observable.create((ObservableOnSubscribe<Long>) emitter -> Observable.interval(10, TimeUnit.MILLISECONDS, Schedulers.computation())
+        ConnectableObservable<Long> connectableObservable = Observable.create((ObservableOnSubscribe<Long>) emitter -> Observable.interval(10, TimeUnit.MILLISECONDS, Schedulers.computation())
                 .take(Integer.MAX_VALUE)
                 .subscribe(emitter::onNext))
                 .observeOn(Schedulers.newThread())
-                .share();
-
-//        Observable<Long> observable = connectableObservable.share();
+                .publish();
+        connectableObservable.connect();
+        Observable<Long> observable = connectableObservable.refCount();
 
         Disposable disposable1 = observable.subscribe(subscriber1);
         Disposable disposable2 = observable.subscribe(subscriber2);
@@ -311,14 +335,44 @@ public class MainActivity extends AppCompatActivity {
         observable.subscribe(subscriber1);
         observable.subscribe(subscriber2);*/
 
-        //==========================P36(Single之后onSuccess和onError事件。)=================================
+        //==========================P33（share操作符封装了publish().refCount()调用。）=================================
+        /*Consumer<Long> subscriber1 = aLong -> System.out.println("subscriber1:" + aLong);
+        Consumer<Long> subscriber2 = aLong -> System.out.println("subscriber2:" + aLong);
+        Consumer<Long> subscriber3 = aLong -> System.out.println("subscriber3:" + aLong);
+
+        Observable<Long> observable = Observable.create((ObservableOnSubscribe<Long>) emitter -> Observable.interval(10, TimeUnit.MILLISECONDS, Schedulers.computation())
+                .take(Integer.MAX_VALUE)
+                .subscribe(emitter::onNext))
+                .observeOn(Schedulers.newThread())
+                .share();
+
+
+        Disposable disposable1 = observable.subscribe(subscriber1);
+        Disposable disposable2 = observable.subscribe(subscriber2);
+        observable.subscribe(subscriber3);
+
+        try {
+            Thread.sleep(20L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        disposable1.dispose();
+        disposable2.dispose();
+
+        System.out.println("subscriber1、subscriber2 重新订阅");
+
+        observable.subscribe(subscriber1);
+        observable.subscribe(subscriber2);*/
+
+        //==========================P36(Single只有onSuccess和onError事件。)=================================
         /*Single.create((SingleOnSubscribe<String>) emitter -> emitter.onSuccess("test"))
                 .subscribe(s -> System.out.println(s), throwable -> throwable.printStackTrace());
 
         Single.create((SingleOnSubscribe<String>) emitter -> emitter.onSuccess("test"))
                 .subscribe((s, throwable) -> System.out.println(s));*/
 
-        //==========================P39(Completable在创建后，不会发射任何数据，从CompletableEmitter的源码中可以看到。Completable之后onComplete和onError事件，同事Completable并没有map、flatMap等操作符。)=================================
+        //==========================P39(Completable在创建后，不会发射任何数据，从CompletableEmitter的源码中可以看到。Completable只有onComplete和onError事件，同时Completable并没有map、flatMap等操作符。)=================================
         /*Completable.fromAction(() -> System.out.println("Hello World")).subscribe();
 
         Completable.create(emitter -> {
@@ -335,12 +389,14 @@ public class MainActivity extends AppCompatActivity {
         /*Maybe.create((MaybeOnSubscribe<String>) emitter -> {
             emitter.onSuccess("testA");
             emitter.onSuccess("testB");
-        }).subscribe(s -> System.out.println("s=" + s));*/
+        }).subscribe(s -> System.out.println("s=" + s));
 
-        /*Maybe.create((MaybeOnSubscribe<String>) emitter -> {
+        //MaybeEmitter先调用onComplete()，即使后面再调用onSuccess()，也不会发射任何数据。
+        Maybe.create((MaybeOnSubscribe<String>) emitter -> {
             emitter.onComplete();
             emitter.onSuccess("testA");
-        }).subscribe(s -> System.out.println("s=" + s));
+        }).subscribe(s -> System.out.println("s=" + s),
+                throwable -> System.out.println(throwable.getMessage()));
 
         Maybe.create((MaybeOnSubscribe<String>) emitter -> {
             emitter.onComplete();
@@ -350,23 +406,24 @@ public class MainActivity extends AppCompatActivity {
                 },
                 () -> System.out.println("Maybe onComplete"));*/
 
-        //==========================P49(Observer会接收AsyncSubject的onComplete之前的最后一个数据)=================================
+        //==========================P49(Observer会接收AsyncSubject的onComplete之前的最后一个数据。注意，subject.onComplete()必须调用才会开始发送数据，否则观察者将不接收任何数据。)=================================
         /*AsyncSubject<String> subject = AsyncSubject.create();
         subject.onNext("asyncSubject1");
         subject.onNext("asyncSubject2");
-        subject.onComplete();
 
         subject.subscribe(s -> System.out.println("asyncSubject:" + s),
                 throwable -> System.out.println("asyncSubject onError"),
                 () -> System.out.println("asyncSubject:complete"));
         subject.onNext("asyncSubject3");
-        subject.onNext("asyncSubject4");*/
+        subject.onNext("asyncSubject4");
+        subject.onComplete();*/
 
         //==========================P50(Observer会先接收到BehaviorSubject被订阅之前的最后一个数据，再接收订阅之后发射过来的数据。如果BehaviorSubject被订阅之前没有发送任何数据，则会发送一个默认数据)=================================
-        /*BehaviorSubject<String> subject = BehaviorSubject.createDefault("behaviorSubject1");
-//        BehaviorSubject<String> subject = BehaviorSubject.create();
+        //BehaviorSubject还可以缓存最近一次发出信息的数据。
+//        BehaviorSubject<String> subject = BehaviorSubject.createDefault("behaviorSubject1");
+        /*BehaviorSubject<String> subject = BehaviorSubject.create();
 
-        subject.onNext("behaviorSubject2");
+//        subject.onNext("behaviorSubject2");
 
         subject.subscribe(s -> System.out.println("behaviorSubject:" + s),
                 throwable -> System.out.println("behaviorSubject onError"),
@@ -375,9 +432,9 @@ public class MainActivity extends AppCompatActivity {
         subject.onNext("behaviorSubject3");
         subject.onNext("behaviorSubject4");*/
 
-        //==========================P52(ReplaySubject会发射所有来自原始Observable的数据给观察者，无论它们是合适订阅的。)=================================
-        /*ReplaySubject<String> subject = ReplaySubject.create();
-//        ReplaySubject<String> subject = ReplaySubject.createWithSize(1);
+        //==========================P52(ReplaySubject会发射所有来自原始Observable的数据给观察者，无论它们是何时订阅的。)=================================
+//        ReplaySubject<String> subject = ReplaySubject.create();
+        /*ReplaySubject<String> subject = ReplaySubject.createWithSize(1);
         subject.onNext("replaySubject1");
         subject.onNext("replaySubject2");
 
@@ -403,35 +460,42 @@ public class MainActivity extends AppCompatActivity {
 
         subject.onNext("publishSubject1");
         subject.onNext("publishSubject2");
+        subject.onComplete();
 
         subject.subscribe(s -> System.out.println("publishSubject:" + s),
                 throwable -> System.out.println("publishSubject onError"),
                 () -> System.out.println("publishSubject onComplete"));
 
         subject.onNext("publishSubject3");
-        subject.onNext("publishSubject4");
-        subject.onComplete();*/
+        subject.onNext("publishSubject4");*/
 
-        //==========================P56=================================
+        //==========================P56（可能错过的事件）=================================
+        //因为subject发射元素的线程被指派到I/O线程中，此时I/O线程正在初始化还没起来，subject发射前，Foo和Bar这两个元素还在主线程中，而在从主线程往I/O线程转发的过程中，由于I/O线程还没有起来，所以就被丢弃了。
         /*PublishSubject<String> subject = PublishSubject.create();
-        *//*Observable subject = Observable.create((ObservableOnSubscribe<String>) emitter -> {
-            emitter.onNext("Foo " + Thread.currentThread().getName());
-            emitter.onNext("Bar " + Thread.currentThread().getName());
-            emitter.onComplete();
-        }).subscribeOn(Schedulers.io());*//*
-
-        subject.subscribe(s -> System.out.println("publishSubject:" + s + " " + Thread.currentThread().getName()),
-                throwable -> System.out.println("publishSubject onError"),
-                () -> System.out.println("publishSubject onComplete"));
-
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        subject
+//                .observeOn(Schedulers.io())
+                .subscribe(s -> System.out.println("publishSubject:" + s + " " + Thread.currentThread().getName()),
+                        throwable -> System.out.println("publishSubject onError"),
+                        () -> System.out.println("publishSubject onComplete"));
 
         subject.onNext("Foo " + Thread.currentThread().getName());
         subject.onNext("Bar " + Thread.currentThread().getName());
         subject.onComplete();*/
+
+        /*try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+
+        //使用Observable.create()来代替subject，它允许为每个订阅者精确控制事件的发送，这样就不会少打印Foo和Bar了。
+        /*Observable.create((ObservableOnSubscribe<String>) emitter -> {
+            emitter.onNext("Foo " + Thread.currentThread().getName());
+            emitter.onNext("Bar " + Thread.currentThread().getName());
+            emitter.onComplete();
+        }).subscribeOn(Schedulers.io())
+                .subscribe(s -> System.out.println("publishSubject:" + s + " " + Thread.currentThread().getName()),
+                        throwable -> System.out.println("publishSubject onError"),
+                        () -> System.out.println("publishSubject onComplete"));*/
     }
 }
