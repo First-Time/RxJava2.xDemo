@@ -27,7 +27,12 @@ public class MainActivity extends AppCompatActivity {
         //==========================P109(map对Observable发射的每一项数据应用一个函数，执行变换操作。)=================================
         /*Observable.just("HELLO")
                 .map(s -> s.toLowerCase())
-                .map(s -> s + " world")
+                .map(new Function<String, String>() {
+                    @Override
+                    public String apply(String s) throws Exception {
+                        return s + " world";
+                    }
+                })
                 .subscribe(s -> System.out.println(s));*/
 
         //==========================P110=================================
