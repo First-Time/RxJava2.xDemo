@@ -67,21 +67,36 @@ public class MainActivity extends AppCompatActivity {
                 .doFinally(() -> executor.shutdown())
                 .subscribe(s -> System.out.println("executor: " + s));*/
 
-        //==========================P219(通过Round-Robin算法实现并行。Round-Robin算法是最简单的一种负载均衡算法。它的原理是把来自用户的请求轮流分配给内部的服务器：从服务器1开始，知道服务器N，然后重新开始循环，也被称为哈希取模法，是非常常用的数据分片方法。Round-Robin算法的优点是简洁，它无须记录当前所有连接的状态，所以是一种无状态调度。)=================================
+        //==========================P219(通过Round-Robin算法实现并行。Round-Robin算法是最简单的一种负载均衡算法。它的原理是把来自用户的请求轮流分配给内部的服务器：从服务器1开始，直到服务器N，然后重新开始循环，也被称为哈希取模法，是非常常用的数据分片方法。Round-Robin算法的优点是简洁，它无须记录当前所有连接的状态，所以是一种无状态调度。)=================================
         /*final AtomicInteger batch = new AtomicInteger(0);
 
         Observable.range(1, 100)
-                .groupBy(integer -> batch.getAndIncrement() % 5)
+                .groupBy(new Function<Integer, Integer>() {
+                    @Override
+                    public Integer apply(Integer integer) throws Exception {
+                        return batch.getAndIncrement() % 5;
+                    }
+                })
                 .flatMap(new Function<GroupedObservable<Integer, Integer>, ObservableSource<?>>() {
                     @Override
                     public ObservableSource<?> apply(GroupedObservable<Integer, Integer> integerIntegerGroupedObservable) throws Exception {
                         return integerIntegerGroupedObservable.observeOn(Schedulers.io())
-                                .map(integer -> integer.toString());
+                                .map(new Function<Integer, String>() {
+                                    @Override
+                                    public String apply(Integer integer) throws Exception {
+                                        return integer.toString();
+                                    }
+                                });
                     }
                 })
-                .subscribe(s -> System.out.println("executor: " + s));*/
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(Object s) throws Exception {
+                        System.out.println("executor: " + s);
+                    }
+                });*/
 
-        //==========================P220(我们也可以使用ExecrtorService创建Scheduler来替代Schedulers.io()。)=================================
+        //==========================P220(我们也可以使用ExecutorService创建Scheduler来替代Schedulers.io()。)=================================
         /*final AtomicInteger batch = new AtomicInteger(0);
 
         int threadNum = 5;
@@ -96,7 +111,10 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(s -> System.out.println("executor: " + s));*/
 
         //==========================P222(ParalleFlowable：RxJava2.0.5版本新增了ParallelFlowable API，它允许并行地执行一些操作符，例如map、filter、concatMap、flatMap、collect、reduce等。)=================================
-        ParallelFlowable parallelFlowable = Flowable.range(1, 100).parallel();
+        //并非所有的顺序操作在并行世界中都是有意义的。目前ParallelFlowable只支持如下操作：
+        //map、filter、flatMap、concatMap、reduce、collect、sorted、toSortedList、compose、fromArray、doOnCancel、doOnError、doOnComplete、doOnNext、doAfterNext、doOnSubscribe、doAfterTerminated、doOnRequest
+
+        /*ParallelFlowable parallelFlowable = Flowable.range(1, 100).parallel();
 
         parallelFlowable.runOn(Schedulers.io())
                 .map(new Function<Integer, Object>() {
@@ -111,6 +129,6 @@ public class MainActivity extends AppCompatActivity {
                     public void accept(String s) throws Exception {
                         System.out.println(s);
                     }
-                });
+                });*/
     }
 }

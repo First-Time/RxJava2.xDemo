@@ -6,14 +6,19 @@ import android.os.Bundle;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.functions.Function3;
+import io.reactivex.functions.Predicate;
 import io.reactivex.observables.ConnectableObservable;
 
 public class MainActivity extends AppCompatActivity {
@@ -53,9 +58,10 @@ public class MainActivity extends AppCompatActivity {
         /*Observable<Integer> odds = Observable.just(1, 3, 5, 7, 9);
         Observable<Integer> evens = Observable.just(2, 4, 6);
 
-        Observable.zip(odds, evens, (integer, integer2) -> integer + integer2).subscribe(integer -> System.out.println("Next: " + integer),
-                throwable -> System.err.println(throwable.getMessage()),
-                () -> System.out.println("onComplete."));*/
+        Observable.zip(odds, evens, (integer, integer2) -> integer + integer2)
+                .subscribe(integer -> System.out.println("Next: " + integer),
+                        throwable -> System.err.println(throwable.getMessage()),
+                        () -> System.out.println("onComplete."));*/
 
         //==========================P167(combineLatest操作符的行为类似于zip，但是只有当原始的Observable中的每一个都发射了一条数据时zip才发射数据，而combineLatest则是当原始的Observable中任意一个发射了数据时就发射一条数据。当原始Observable的任何一个发射了一条数据时，combineLatest使用一个函数结合它们最近发射的数据，然后发射这个函数的返回值。)=================================
         /*Observable<Integer> odds = Observable.just(1, 3, 5,7,9);
